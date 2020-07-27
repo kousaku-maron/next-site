@@ -1,4 +1,34 @@
 import GithubSlugger from 'github-slugger';
+import { Children, isValidElement } from 'react';
+
+const hasChildren = element => isValidElement(element) && Boolean(element.props.children);
+
+const childToString = child => {
+  if (typeof child === 'undefined' || child === null || typeof child === 'boolean') {
+    return '';
+  }
+  if (JSON.stringify(child) === '{}') {
+    return '';
+  }
+  return child.toString();
+};
+
+const onlyText = children => {
+  if (!(children instanceof Array) && !isValidElement(children)) {
+    return childToString(children);
+  }
+  return Children.toArray(children).reduce((text, child) => {
+    let newText = '';
+    if (isValidElement(child) && hasChildren(child)) {
+      newText = onlyText(child.props.children);
+    } else if (isValidElement(child) && !hasChildren(child)) {
+      newText = '';
+    } else {
+      newText = childToString(child);
+    }
+    return text.concat(newText);
+  }, '');
+};
 
 const PermalinkIcon = () => (
   <span>
@@ -42,21 +72,10 @@ const HeadingComponent = props => {
   const children = component.props.children || '';
 
   let { id } = props;
-  let text = children;
 
-  const slugger = new GithubSlugger();
-
-  if (id == null) {
-    // If there are sub components, convert them to text
-    if (Array.isArray(children)) {
-      text = children
-        .map(child => {
-          return typeof child === 'object' ? child.props.children : child;
-        })
-        .join('');
-    }
-
-    id = slugger.slug(text);
+  if (!id) {
+    const slugger = new GithubSlugger();
+    id = slugger.slug(onlyText(children));
   }
 
   const targetStyle =

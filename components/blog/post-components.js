@@ -1,110 +1,48 @@
-import GithubSlugger from 'github-slugger';
-import { Children, isValidElement } from 'react';
 import { components as docsComponents } from '../docs/documentation';
 import HeadingComponent from '../docs/heading';
 
-const hasChildren = element => isValidElement(element) && Boolean(element.props.children);
-
-const childToString = child => {
-  if (typeof child === 'undefined' || child === null || typeof child === 'boolean') {
-    return '';
-  }
-  if (JSON.stringify(child) === '{}') {
-    return '';
-  }
-  return child.toString();
-};
-
-const onlyText = children => {
-  if (!(children instanceof Array) && !isValidElement(children)) {
-    return childToString(children);
-  }
-  return Children.toArray(children).reduce((text, child) => {
-    let newText = '';
-    if (isValidElement(child) && hasChildren(child)) {
-      newText = onlyText(child.props.children);
-    } else if (isValidElement(child) && !hasChildren(child)) {
-      newText = '';
-    } else {
-      newText = childToString(child);
-    }
-    return text.concat(newText);
-  }, '');
-};
-
 const H1 = ({ children, id }) => {
-  let slug = id;
-
-  if (!slug) {
-    const text = onlyText(children);
-    if (text) {
-      const slugger = new GithubSlugger();
-      slug = slugger.slug(text, false);
-    }
-  }
-
   return (
-    <HeadingComponent lean id={slug}>
-      <h1 className="fw7">
-        {children}
-
-        <style jsx>{`
-          text-align: center;
-          margin-top: 0;
-          font-size: 2rem;
-        `}</style>
-      </h1>
-    </HeadingComponent>
+    <>
+      <HeadingComponent lean id={id}>
+        <h1 className="fw7">{children}</h1>
+      </HeadingComponent>
+      <style jsx>{`
+        text-align: center;
+        margin-top: 0;
+        font-size: 2rem;
+      `}</style>
+    </>
   );
 };
 
 const H2 = ({ children, id }) => {
-  let slug = id;
-
-  if (!slug) {
-    const text = onlyText(children);
-    if (text) {
-      const slugger = new GithubSlugger();
-      slug = slugger.slug(text, false);
-    }
-  }
-
   return (
-    <HeadingComponent lean id={slug}>
-      <h2 className="fw7">
-        {children}{' '}
-        <style jsx>{`
-          h2 {
-            margin-top: 2.5rem;
-          }
-        `}</style>
-      </h2>
-    </HeadingComponent>
+    <>
+      <HeadingComponent lean id={id}>
+        <h2 className="fw7">{children}</h2>
+      </HeadingComponent>
+      <style jsx>{`
+        h2 {
+          margin-top: 2.5rem;
+        }
+      `}</style>
+    </>
   );
 };
 
 const H3 = ({ children, id }) => {
-  let slug = id;
-
-  if (!slug) {
-    const text = onlyText(children);
-    if (text) {
-      const slugger = new GithubSlugger();
-      slug = slugger.slug(text, false);
-    }
-  }
-
   return (
-    <HeadingComponent lean id={slug}>
-      <h3 className="fw7">
-        {children}
-        <style jsx>{`
-          h3 {
-            margin-top: 2rem;
-          }
-        `}</style>
-      </h3>
-    </HeadingComponent>
+    <>
+      <HeadingComponent lean id={id}>
+        <h3 className="fw7">{children}</h3>
+      </HeadingComponent>
+      <style jsx>{`
+        h3 {
+          margin-top: 2rem;
+        }
+      `}</style>
+    </>
   );
 };
 
